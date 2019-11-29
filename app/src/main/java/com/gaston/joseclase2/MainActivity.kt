@@ -18,16 +18,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         button.setOnClickListener {
             val deviceId = editText.text.toString().trim()
-            observeData(deviceId)
+            observeData()
+            viewModel.onSelectedDeviceChanged(deviceId)
+            viewModel.onSelectedEstadoGlobal(deviceId)
+        }
+
+        button2.setOnClickListener {
+            viewModel.selectedDevice.removeObservers(this)
+            viewModel.selectedEstado.removeObservers(this)
         }
     }
 
-    fun observeData(deviceId:String){
-        viewModel.fetchDeviceData(deviceId).observe(this, Observer {
+    fun observeData(){
+
+        viewModel.selectedDevice.observe(this, Observer {
             textView.text = "Tipo: ${it.devType}"
         })
 
-        viewModel.fetchEstadoGlobal(deviceId).observe(this, Observer {
+        viewModel.selectedEstado.observe(this, Observer {
             val armado = it.armado.toInt()
             when(armado){
                 0 -> {
